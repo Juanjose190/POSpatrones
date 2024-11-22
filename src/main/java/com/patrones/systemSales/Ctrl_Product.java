@@ -1,92 +1,78 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.patrones.systemSales;
 
-/**
- *
- * @author JUAN JOSE
- */
 import com.patrones.systemSales.model.Product;
-import com.patrones.systemSales.repository.ProductRepository;
-import java.util.List;
+import com.patrones.systemSales.services.ProductService;
+import com.patrones.systemSales.services.ProductServiceImpl;
+import com.patrones.systemSales.proxy.ProductServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-
-import java.util.Optional;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/products")
 public class Ctrl_Product {
 
+    private final ProductService productService;
+
     @Autowired
-    private ProductRepository productRepository;
+    public Ctrl_Product(ProductServiceImpl productServiceImpl) {
+        this.productService = new ProductServiceProxy(productServiceImpl);
+    }
 
     @PostMapping
     public ResponseEntity<Product> save(@RequestBody Product product) {
         try {
-            productRepository.save(product);
-            return ResponseEntity.status(HttpStatus.CREATED).body(product);
+            productService.save(product);
+            return ResponseEntity.status(201).body(product);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productService.findAll();
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable int productId) {
-        Optional<Product> productOpt = productRepository.findById(productId);
-        return productOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Product product = productService.findAll().stream()
+                .filter(p -> p.getIdProduct() == productId)
+                .findFirst()
+                .orElse(null);
+        return product != null ? ResponseEntity.ok(product) : ResponseEntity.status(404).build();
     }
 
     @PutMapping("/{productId}")
     public ResponseEntity<Product> update(@RequestBody Product product, @PathVariable int productId) {
         try {
-            product.setIdProduct(productId);
-            Product updatedProduct = productRepository.save(product);
-            return ResponseEntity.ok(updatedProduct);
+            productService.update(product, productId);
+            return ResponseEntity.ok(product);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> delete(@PathVariable int productId) {
         try {
-            productRepository.deleteById(productId);
+            productService.delete(productId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
     @PatchMapping("/{productId}/updateStock")
     public ResponseEntity<Boolean> updateStock(@PathVariable int productId, @RequestParam int newQuantity) {
-        Optional<Product> productOpt = productRepository.findById(productId);
-        if (productOpt.isPresent()) {
-            Product product = productOpt.get();
-            product.setQuantity(newQuantity);
-            productRepository.save(product);
-            return ResponseEntity.ok(true);
+        try {
+            boolean result = productService.updateStock(productId, newQuantity);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
-        return ResponseEntity.notFound().build();
     }
 }

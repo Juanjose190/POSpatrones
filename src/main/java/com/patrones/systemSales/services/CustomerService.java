@@ -1,29 +1,30 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.patrones.systemSales.services;
 
-/**
- *
- * @author JUAN JOSE
- */
 import com.patrones.systemSales.model.Customer;
+import com.patrones.systemSales.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import com.patrones.systemSales.repository.ClientRepository;
 
 @Service
 public class CustomerService {
 
-    private final ClientRepository customerRepository;
+    private static CustomerService instance;
 
     @Autowired
-    public CustomerService(ClientRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    private ClientRepository customerRepository;
+
+    private CustomerService() {
+       
+    }
+
+    public static synchronized CustomerService getInstance() {
+        if (instance == null) {
+            instance = new CustomerService();
+        }
+        return instance;
     }
 
     public Customer save(Customer customer) {

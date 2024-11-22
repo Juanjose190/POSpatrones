@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "tb_sale")
+@Table(name = "tb_sales_header")
 public class Sale {
 
     @Id

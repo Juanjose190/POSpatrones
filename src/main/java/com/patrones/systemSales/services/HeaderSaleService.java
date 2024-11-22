@@ -10,6 +10,7 @@ package com.patrones.systemSales.services;
  */
 import com.patrones.systemSales.model.HeaderSale;
 import com.patrones.systemSales.repository.HeaderSaleRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +27,9 @@ public class HeaderSaleService {
             System.out.println("Error saving Header Sale: " + e);
             return false;
         }
+    }
+
+    public List<HeaderSale> listSales() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

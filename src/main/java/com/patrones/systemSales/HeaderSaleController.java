@@ -10,6 +10,7 @@ package com.patrones.systemSales;
  */
 import com.patrones.systemSales.model.HeaderSale;
 import com.patrones.systemSales.services.HeaderSaleService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,5 +24,10 @@ public class HeaderSaleController {
     @PostMapping("/register")
     public boolean registerSale(@RequestBody HeaderSale headerSale) {
         return headerSaleService.registerSale(headerSale);
+    }
+    
+       @GetMapping("/list")
+    public List<HeaderSale> listSales() {
+        return headerSaleService.listSales();
     }
 }

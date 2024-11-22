@@ -48,7 +48,7 @@ public class ReportService {
         String path = System.getProperty("user.home");
         PdfWriter.getInstance(document, new FileOutputStream(path + "/Desktop/Client_Report.pdf"));
 
-        Image header = Image.getInstance(HEADER_IMAGE_PATH); // Correct way to load an image
+        Image header = Image.getInstance(HEADER_IMAGE_PATH);
         header.scaleToFit(650, 1000);
         header.setAlignment(Chunk.ALIGN_CENTER);
 
@@ -140,7 +140,7 @@ public class ReportService {
         categoryRepository.findAll().forEach(category -> {
             table.addCell(String.valueOf(category.getIdCategory()));
             table.addCell(category.getDescription());
-            table.addCell(String.valueOf(category.getStatus())); // Assuming state is a string
+            table.addCell(String.valueOf(category.getStatus())); 
         });
 
         document.add(table);
@@ -174,7 +174,7 @@ public class ReportService {
             table.addCell(String.valueOf(sale.getId()));
             table.addCell(sale.getClientName());
             table.addCell(String.valueOf(sale.getTotalAmount()));
-            table.addCell(sale.getSaleDate().toString()); // Assuming saleDate is a Date or LocalDate
+            table.addCell(sale.getSaleDate().toString()); 
             table.addCell(sale.getStatus());
         });
 

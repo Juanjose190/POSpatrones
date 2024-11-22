@@ -1,13 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.patrones.systemSales;
 
-/**
- *
- * @author JUAN JOSE
- */
+import com.patrones.systemSales.factory.CustomerFactory;
 import com.patrones.systemSales.model.Customer;
 import com.patrones.systemSales.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +9,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/customers")
 public class Ctrl_Customer {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private CustomerFactory customerFactory;
 
     @PostMapping
     public ResponseEntity<Customer> save(@RequestBody Customer customer) {
@@ -49,9 +44,8 @@ public class Ctrl_Customer {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-   @DeleteMapping("/{idCustomer}")
-public ResponseEntity<Void> delete(@PathVariable int idCustomer) {
-    return customerService.delete(idCustomer) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-}
-
+    @DeleteMapping("/{idCustomer}")
+    public ResponseEntity<Void> delete(@PathVariable int idCustomer) {
+        return customerService.delete(idCustomer) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 }
